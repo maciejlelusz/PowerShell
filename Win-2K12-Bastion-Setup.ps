@@ -1,0 +1,17 @@
+# PowerShell Win 2012 Bastion Host Setup Script
+
+# Disable Windows Firewall
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+
+# Disable IPv6
+Disable-NetAdapterBinding -InterfaceAlias Ethernet0 -ComponentID ms_tcpip6
+Disable-NetAdapterBinding -InterfaceAlias Ethernet1 -ComponentID ms_tcpip6
+
+# IP Configuration
+New-NetIPAddress –InterfaceAlias Ethernet0 –IPAddress 172.30.0.101 –PrefixLength 24 -DefaultGateway 172.30.0.1
+New-NetIPAddress –InterfaceAlias Ethernet1 –IPAddress 192.168.2.100 –PrefixLength 24
+Set-DnsClientServerAddress -InterfaceAlias Ethernet0 -ServerAddresses 8.8.8.8
+
+# RDP Access Setup
+Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name fDenyTSConnections -Value 0
