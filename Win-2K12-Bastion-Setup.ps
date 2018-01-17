@@ -16,7 +16,9 @@ Set-DnsClientServerAddress -InterfaceAlias Ethernet0 -ServerAddresses 8.8.8.8
 # RDP Access Setup
 Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name fDenyTSConnections -Value 0
 
-# Setup NTP (in CLI)
-net start w32time
+# Setup NTP
+Stop-Service w32time
 reg add HKLM\system\CurrentControlSet\Services\W32Time\TimeProviders\NtpServer /v Enabled /t REG_DWORD /d 0x1 /f
+w32tm /config /manualpeerlist:"0.pool.ntp.org 1.pool.ntp.org" /syncfromflags:MANUAL
+Start-Service w32time
 w32tm /config /update
